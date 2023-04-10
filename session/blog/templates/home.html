@@ -1,11 +1,80 @@
-<h1>LIKELION 11 Blog Project</h1>
-<a href="{% url 'new' %}">새 글 작성하기</a>
-<div>
-    {% for blog in blogs %}
-    <a href="{%url 'detail' blog.id %}">
-        <h2>{{blog.title}}</h2>
-        <p>{{blog.summary}}</p>
-        <p>{{blog.created_at}}</p>
-    </a>
-    {% endfor %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title%}
+블로그 홈페이지!!
+{% endblock title%}
+
+{% block content %}
+<div class="newbox">
+    <a href="{%url 'new'%}">새글 작성하기</a>
 </div>
+
+<div class="contentcontainer">
+    <div class="content">
+        {% for blog in page_obj %}
+        <div class="one-box">
+            <a href="{%url 'detail' blog.id%}">
+                <h2>{{blog.title}}</h2>
+                <p>{{blog.summary}}</p>
+                <p>{% if blog.image %}
+                    <img src="{{blog.image.url}}" alt="이미지" width="200px">
+                    {% endif %}</p>
+                <p>{{blog.created_at}}</p>
+                </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- 하단 페이지 -->
+<br>
+<!-- <span>
+    {% if page_obj.has_previous %}
+    <a href="?page=1">처음으로</a>
+    <a href="?page={{page_obj.previous_page_number}}">이전</a>
+    {% endif %}
+
+    <p>{{page_obj.number}}</p>
+    <p></p>
+    <p>{{page_obj.paginator.num_pages}}</p>
+
+    {% if page_obj.has_next %}
+    <a a href="?page={{page_obj.next_page_number}}">다음</a>
+    <a a href="?page={{page_obj.paginator.num_pages}}">마지막으로</a>
+    {% endif %}
+</span> -->
+<ul class="pagination justify-content-center">
+    <!-- 이전페이지 -->
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{page_obj.previous_page_number}}">이전</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">이전</a>
+    </li>
+    {% endif %}
+    <!-- 페이지리스트 -->
+    {% for page_number in page_obj.paginator.page_range %}
+    {% if page_number == page_obj.number %}
+    <li class="page-item active" aria-current="page">
+        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+    </li>
+    {% else %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+    <!-- 다음페이지 -->
+    {% if page_obj.has_next %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled">
+        <a class="page-link" tabindex="-1" aria-disabled="true" href="#">다음</a>
+    </li>
+    {% endif %}
+</ul>
+{% endblock content %}
